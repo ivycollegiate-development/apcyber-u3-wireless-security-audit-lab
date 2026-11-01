@@ -1,0 +1,28 @@
+bssid,ssid,encryption,channel,signal_dbm,vendor_oui,is_hidden,client_count,notes
+00:11:22:33:44:55,TSMC-Corp,WPA3-Enterprise,36,-45,00:11:22,False,12,Corporate Wi-Fi 802.1X-RADIUS
+00:11:22:33:44:56,TSMC-Corp,WPA3-Enterprise,40,-52,00:11:22,False,8,Corporate Wi-Fi 802.1X-RADIUS AP2
+00:11:22:33:44:57,TSMC-Corp,WPA3-Enterprise,44,-58,00:11:22,False,5,Corporate Wi-Fi 802.1X-RADIUS AP3
+33:44:55:66:77:88,TSMC-OT,WPA3-Enterprise,149,-42,33:44:55,False,3,OT Network - Fab 18 Lithography Controls
+33:44:55:66:77:89,TSMC-OT,WPA3-Enterprise,153,-48,33:44:55,False,2,OT Network - Fab 18 Etch Controls
+33:44:55:66:77:90,TSMC-OT,WPA3-Enterprise,157,-55,33:44:55,False,1,OT Network - Fab 18 Metrology
+66:77:88:99:AA:BB,TSMC-Guest,Open,1,-65,66:77:88,False,25,Guest Wi-Fi - Lobby & Conference
+66:77:88:99:AA:BC,TSMC-Guest,Open,6,-70,66:77:88,False,18,Guest Wi-Fi - Cafeteria
+66:77:88:99:AA:BD,TSMC-Guest,Open,11,-72,66:77:88,False,12,Guest Wi-Fi - Parking Structure
+99:AA:BB:CC:DD:EE,TSMC-IoT,WPA2-Personal,36,-60,99:AA:BB,False,45,IoT Sensors - Environmental Monitoring
+99:AA:BB:CC:DD:EF,TSMC-IoT,WPA2-Personal,40,-63,99:AA:BB,False,38,IoT Sensors - Power Monitoring
+99:AA:BB:CC:DD:F0,TSMC-IoT,WPA2-Personal,44,-68,99:AA:BB,False,32,IoT Sensors - Vibration Monitoring
+CC:DD:EE:FF:00:11,TSMC-Mgmt,WPA3-Enterprise,161,-40,CC:DD:EE,False,4,Management Network - Switches/Firewalls
+CC:DD:EE:FF:00:12,TSMC-Mgmt,WPA3-Enterprise,165,-45,CC:DD:EE,False,3,Management Network - Server iDRAC
+AA:BB:CC:DD:EE:FF,TSMC-Guest,Open,1,-68,66:77:88,False,22,Guest Wi-Fi Failover AP (Authorized HA)
+11:22:33:44:55:66,TSMC-C0rp,WPA2-Personal,36,-55,11:22:33,False,3,Evil Twin - Typosquatting TSMC-Corp
+22:33:44:55:66:77,TSMC-Corp,WPA2-Personal,36,-58,22:33:44,False,1,Rogue AP - Unauthorized Vendor on Corp SSID
+33:44:55:66:77:99,TSMC-Building,WPA-Personal,6,-50,33:44:55,False,6,Building Management - HVAC Controllers
+44:55:66:77:88:99,TSMC-Building,WPA-Personal,11,-55,44:55:66,False,4,Building Management - Access Control
+55:66:77:88:99:AA,TSMC-SCADA,WEP,1,-45,55:66:77,False,2,Legacy SCADA - Water Treatment (OT)
+66:77:88:99:AA:CC,TSMC-Sensor,WPA2-Personal,149,-48,66:77:88,False,12,Sensor Network - Chemical Leak Detection (OT)
+77:88:99:AA:BB:CC,,WPA2-Enterprise,36,-62,77:88:99,True,0,Hidden SSID - Unknown Purpose
+88:99:AA:BB:CC:DD,TSMC-Archive,WPA2-Personal,44,-70,88:99:AA,False,1,Legacy Archive Server - WPA2-PSK
+99:AA:BB:CC:DD:EE,TSMC-OT-Backup,WPA2-Personal,153,-52,99:AA:BB,False,1,OT Backup Link - Should be WPA3-Enterprise
+AA:BB:CC:DD:EE:00,TSMC-Dev,Open,11,-75,AA:BB:CC,False,0,Development Test Network - Open (No Clients)
+BB:CC:DD:EE:FF:00,TSMC-Contractor,WPA2-Personal,6,-65,BB:CC:DD,False,8,Contractor Network - Shared PSK
+CC:DD:EE:FF:00:11,TSMC-OT,WPA3-Enterprise,157,-50,CC:DD:EE,False,2,OT Network - Duplicate BSSID Check

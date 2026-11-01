@@ -1,0 +1,133 @@
+name: Grade Wireless Security Audit
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install pandas --quiet
+
+      - name: Run audit script
+        run: |
+          python3 wireless_audit.py
+
+      - name: Verify audit_results.csv exists
+        run: |
+          if [ ! -f audit_results.csv ]; then
+            echo "::error::audit_results.csv not found. Run the audit script first."
+            exit 1
+          fi
+          echo "✓ audit_results.csv exists"
+
+      - name: Validate CSV structure
+        run: |
+          python3 << 'EOF'
+          import pandas as pd
+          import sys
+
+          df = pd.read_csv("audit_results.csv")
+
+          # Required columns
+          required_cols = [
+              "check_id", "check_name", "bssid", "ssid", "encryption",
+              "channel", "signal_dbm", "vendor_oui", "vendor_name",
+              "is_hidden", "client_count", "notes", "default_severity", "analyst_notes"
+          ]
+
+          missing = [c for c in required_cols if c not in df.columns]
+          if missing:
+              print(f"::error::Missing required columns: {missing}")
+              sys.exit(1)
+
+          print(f"✓ All {len(required_cols)} required columns present")
+          print(f"✓ {len(df)} findings rows")
+
+          # Check that analyst_notes is filled for at least some rows
+          filled_notes = df["analyst_notes"].notna().sum()
+          if filled_notes == 0:
+              print("::error::No analyst_notes filled in. You must classify each finding.")
+              sys.exit(1)
+
+          print(f"✓ {filled_notes}/{len(df)} findings have analyst_notes")
+
+          # Check for severity classification in analyst_notes
+          severity_keywords = ["Critical", "High", "Medium", "Low", "Accepted Risk"]
+          classified = 0
+          for _, row in df.iterrows():
+              notes = str(row["analyst_notes"])
+              if any(kw in notes for kw in severity_keywords):
+                  classified += 1
+
+          if classified < 3:
+              print(f"::warning::Only {classified} findings have explicit severity classification in analyst_notes")
+
+          # Check for remediation proposals (look for keywords)
+          remediation_keywords = ["remediation", "fix", "rotate", "deploy", "segment", "block", "patch", "upgrade"]
+          remediated = 0
+          for _, row in df.iterrows():
+              notes = str(row["analyst_notes"]).lower()
+              if any(kw in notes for kw in remediation_keywords):
+                  remediated += 1
+
+          if remediated < 3:
+              print(f"::warning::Only {remediated} findings appear to have remediation proposals (need 3+)")
+
+          # Check for false positive identification
+          fp_keywords = ["false positive", "false-positive", "not a finding", "not a risk", "authorized", "expected", "legitimate", "ha pair", "failover"]
+          has_fp = False
+          for _, row in df.iterrows():
+              notes = str(row["analyst_notes"]).lower()
+              if any(kw in notes for kw in fp_keywords):
+                  has_fp = True
+                  break
+
+          if not has_fp:
+              print("::warning::No false positive identification found in analyst_notes")
+
+          print("✓ Structure validation passed")
+          EOF
+
+      - name: Summary
+        run: |
+          echo "### Grading Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          python3 << 'EOF'
+          import pandas as pd
+          df = pd.read_csv("audit_results.csv")
+          print(f"- **Total findings:** {len(df)}") >> $GITHUB_STEP_SUMMARY
+          print(f"- **Findings with analyst notes:** {df['analyst_notes'].notna().sum()}") >> $GITHUB_STEP_SUMMARY
+          print(f"- **Unique checks triggered:** {df['check_id'].nunique()}") >> $GITHUB_STEP_SUMMARY
+          print("") >> $GITHUB_STEP_SUMMARY
+          print("| Severity | Count |") >> $GITHUB_STEP_SUMMARY
+          print("|----------|-------|") >> $GITHUB_STEP_SUMMARY
+          for sev in ["Critical", "High", "Medium", "Low"]:
+              count = len(df[df["default_severity"] == sev])
+              print(f"| {sev} | {count} |") >> $GITHUB_STEP_SUMMARY
+          EOF
+          cat $GITHUB_STEP_SUMMARY
+
+      - name: Upload results artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-results
+          path: audit_results.csv
+          retention-days: 30
