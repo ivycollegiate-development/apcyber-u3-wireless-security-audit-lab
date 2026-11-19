@@ -22,7 +22,7 @@ AA:BB:CC:DD:EE:FF,TSMC-Guest,Open,1,-68,66:77:88,False,22,Guest Wi-Fi Failover A
 66:77:88:99:AA:CC,TSMC-Sensor,WPA2-Personal,149,-48,66:77:88,False,12,Sensor Network - Chemical Leak Detection (OT)
 77:88:99:AA:BB:CC,,WPA2-Enterprise,36,-62,77:88:99,True,0,Hidden SSID - Unknown Purpose
 88:99:AA:BB:CC:DD,TSMC-Archive,WPA2-Personal,44,-70,88:99:AA,False,1,Legacy Archive Server - WPA2-PSK
-99:AA:BB:CC:DD:EE,TSMC-OT-Backup,WPA2-Personal,153,-52,99:AA:BB,False,1,OT Backup Link - Should be WPA3-Enterprise
+99:AA:BB:CC:DD:E1,TSMC-OT-Backup,WPA2-Personal,153,-52,99:AA:BB,False,1,OT Backup Link - Second uplink for fab tool telemetry
 AA:BB:CC:DD:EE:00,TSMC-Dev,Open,11,-75,AA:BB:CC,False,0,Development Test Network - Open (No Clients)
 BB:CC:DD:EE:FF:00,TSMC-Contractor,WPA2-Personal,6,-65,BB:CC:DD,False,8,Contractor Network - Shared PSK
-CC:DD:EE:FF:00:11,TSMC-OT,WPA3-Enterprise,157,-50,CC:DD:EE,False,2,OT Network - Duplicate BSSID Check
+CC:DD:EE:FF:00:21,TSMC-OT,WPA3-Enterprise,157,-50,CC:DD:EE,False,2,OT Network - Backup link (separate management path)

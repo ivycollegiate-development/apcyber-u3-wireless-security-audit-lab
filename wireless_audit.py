@@ -35,6 +35,7 @@ def load_data():
     """Load the wireless networks dataset."""
     try:
         df = pd.read_csv(INPUT_CSV)
+        df["ssid"] = df["ssid"].fillna("")
         print(f"[+] Loaded {len(df)} networks from {INPUT_CSV}")
         return df
     except FileNotFoundError:
@@ -72,30 +73,32 @@ def check_hidden_ot(df):
 
 
 def check_rogue_same_ssid_diff_bssid(df):
-    """ROGUE-001: Same SSID, different BSSID, different vendor OUI."""
-    # Group by SSID, find those with multiple BSSIDs and multiple OUIs
-    s = df.groupby("ssid").agg(
-        bssid_count=("bssid", "nunique"),
-        oui_count=("vendor_oui", "nunique"),
-        ouis=("vendor_oui", lambda x: list(x.unique())),
-        bssids=("bssid", lambda x: list(x.unique()))
-    ).reset_index()
-    suspicious = s[(s["bssid_count"] > 1) & (s["oui_count"] > 1) & (s["ssid"] != "")]
+    """ROGUE-001: Same SSID, multiple vendor OUIs. Flags only APs whose OUI differs
+    from the SSID's most common (modal) OUI; a tie flags every AP of that SSID."""
     findings = []
-    for _, row in suspicious.iterrows():
-        for bssid in row["bssids"]:
-            net = df[df["bssid"] == bssid].iloc[0]
+    for ssid, grp in df[df["ssid"] != ""].groupby("ssid"):
+        counts = grp["vendor_oui"].value_counts()
+        if len(counts) < 2:
+            continue
+        if counts.iloc[0] == counts.iloc[1]:
+            odd = grp
+        else:
+            odd = grp[grp["vendor_oui"] != counts.index[0]]
+        for _, net in odd.iterrows():
             findings.append(net)
     return pd.DataFrame(findings) if findings else pd.DataFrame(columns=df.columns)
 
 
 def check_rogue_typosquat(df):
     """ROGUE-002: SSID mimicking known corporate SSID with typo."""
-    corporate_ssids = df[df["ssid"].str.startswith(CORPORATE_SSID_PREFIX, na=False)]["ssid"].unique()
+    corporate_ssids = df[
+        df["ssid"].str.startswith(CORPORATE_SSID_PREFIX, na=False)
+        & df["vendor_oui"].isin(APPROVED_OUIS)
+    ]["ssid"].unique()
     findings = []
     for _, net in df.iterrows():
         ssid = net["ssid"]
-        if ssid == "" or ssid in corporate_ssids:
+        if not ssid or not isinstance(ssid, str) or ssid in corporate_ssids:
             continue
         # Check if it's a typo of a corporate SSID (edit distance 1-2, same prefix)
         for corp_ssid in corporate_ssids:

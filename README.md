@@ -8,7 +8,7 @@ AP Cybersecurity Unit 3, Lesson 5. A simulated wireless environment with multipl
 
 You are a security analyst contracted to audit the wireless infrastructure of **Taiwan Semiconductor Manufacturing Company (TSMC) Fab 18** — a 3nm process facility in Tainan. The audit covers 27 wireless networks across the campus: corporate Wi-Fi, guest networks, IoT sensor networks, building management systems, and isolated OT networks.
 
-**27 wireless networks, 5 SSID categories, 3 encryption protocols, 4 rogue APs planted.** The data is `wireless_networks.csv`. The script is `wireless_audit.py`.
+**27 wireless networks, 13 SSIDs, 6 encryption types, 4 rogue APs planted.** The data is `wireless_networks.csv`. The script is `wireless_audit.py`.
 
 ## Your Job
 
@@ -54,7 +54,7 @@ bssid,ssid,encryption,channel,signal_dbm,vendor_oui,is_hidden,client_count,notes
 | **WPA1-001** | Any network using WPA (TKIP) — not WPA2/WPA3 | TKIP has known vulnerabilities; deprecated |
 | **OPEN-001** | Open networks (no encryption) with clients | Anyone can join and sniff traffic |
 | **HIDDEN-001** | Hidden SSIDs with clients | Security through obscurity; still discoverable |
-| **ROGUE-001** | Duplicate SSID with different BSSID/vendor — Evil Twin candidate | Classic evil twin: attacker mimics legitimate AP |
+| **ROGUE-001** | Same SSID where one AP's vendor OUI differs from that SSID's other APs — Evil Twin candidate | Classic evil twin: attacker mimics legitimate AP |
 | **ROGUE-002** | SSID mimicking known corporate SSID with typo (e.g., "TSMC-C0rp") | Typosquatting for credential harvest |
 | **CHANNEL-001** | Co-channel interference: >3 APs on same channel in same area | Performance + security: easier to jam/confuse |
 | **WEAK-001** | WPA2-Personal with short/pre-shared key (inferred from context) | PSK vulnerable to offline dictionary attack |

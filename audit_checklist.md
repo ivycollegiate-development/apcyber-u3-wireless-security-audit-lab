@@ -21,7 +21,7 @@ Use this checklist while reviewing your `audit_results.csv` output. For each fin
 
 | Check | What to Look For | Severity Guidance |
 |-------|------------------|-------------------|
-| **ROGUE-001** | Same SSID, different BSSID, different vendor OUI | **Critical** — Active evil twin. Attacker mimicking legitimate AP. |
+| **ROGUE-001** | Same SSID, one AP on a vendor OUI that differs from the rest of that SSID | **Critical** — Active evil twin. Attacker mimicking legitimate AP. |
 | **ROGUE-002** | SSID with typo vs known corporate SSID (e.g., "TSMC-C0rp", "TSMC-Guestt") | **Critical** — Typosquatting for credential harvest. |
 | **ROGUE-003** | Unknown vendor OUI on corporate SSID | **High** — Unauthorized hardware. Could be rogue AP or misconfigured vendor device. |
 
@@ -109,7 +109,7 @@ Timeline: [Immediate / 48h / 2 weeks / Next window]
 A **false positive** is a finding that the script flagged but is **not actually a risk** in context.
 
 Example:
-> **False Positive:** `ROGUE-001` on BSSID `AA:BB:CC:DD:EE:FF`, SSID `TSMC-Guest`
-> **Why:** This is the legitimate guest network failover AP (vendor `66:77:88` Ubiquiti) — same SSID, different BSSID is expected for high-availability guest Wi-Fi. The script doesn't know this is an authorized HA pair.
+> **False Positive:** `[CHECK-ID]` on BSSID `[AA:BB:CC:DD:EE:FF]`, SSID `[SSID]`
+> **Why:** [One sentence of evidence from the CSV — vendor OUI in the approved table, client count, the `notes` field, or the encryption policy — that shows this flagged row is expected in context.]
 
 **You must identify at least one false positive from your own output and explain why.**
