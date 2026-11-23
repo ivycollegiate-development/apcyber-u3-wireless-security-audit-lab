@@ -36,6 +36,11 @@ def load_data():
     try:
         df = pd.read_csv(INPUT_CSV)
         df["ssid"] = df["ssid"].fillna("")
+        # CSVs edited by hand can carry numeric-looking text or "True"/"False"
+        # strings. Normalise once here so every check sees the same dtypes.
+        for column in ("channel", "signal_dbm", "client_count"):
+            df[column] = pd.to_numeric(df[column], errors="coerce")
+        df["is_hidden"] = df["is_hidden"].astype(str).str.strip().str.lower().eq("true")
         print(f"[+] Loaded {len(df)} networks from {INPUT_CSV}")
         return df
     except FileNotFoundError:
@@ -246,6 +251,9 @@ def run_all_checks(df):
                     })
         except Exception as e:
             print(f"[!] Check {check_id} failed: {e}")
+            # A swallowed failure silently omits a check from the graded CSV.
+            # Stop instead of handing students an incomplete audit.
+            raise
 
     return pd.DataFrame(all_findings)
 

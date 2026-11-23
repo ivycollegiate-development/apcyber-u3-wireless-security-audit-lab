@@ -65,15 +65,15 @@ Use this checklist while reviewing your `audit_results.csv` output. For each fin
 
 ## Approved Vendor OUIs for TSMC Fab 18 (Reference)
 
-| OUI | Vendor | Authorized Networks |
-|-----|--------|---------------------|
-| `00:11:22` | Cisco Meraki | TSMC-Corp, TSMC-Guest, TSMC-IoT |
-| `33:44:55` | Aruba/HPE | TSMC-Corp, TSMC-OT |
-| `66:77:88` | Ubiquiti | TSMC-Guest, TSMC-IoT |
-| `99:AA:BB` | Ruckus | TSMC-Corp |
-| `CC:DD:EE` | Fortinet | TSMC-OT, TSMC-Mgmt |
+| OUI | Vendor | Networks seen on this OUI in the dataset |
+|-----|--------|------------------------------------------|
+| `00:11:22` | Cisco Meraki | TSMC-Corp |
+| `33:44:55` | Aruba/HPE | TSMC-OT, TSMC-Building |
+| `66:77:88` | Ubiquiti | TSMC-Guest, TSMC-Sensor |
+| `99:AA:BB` | Ruckus | TSMC-IoT, TSMC-OT-Backup |
+| `CC:DD:EE` | Fortinet | TSMC-Mgmt, TSMC-OT |
 
-**Any other OUI on a TSMC-* SSID is suspicious.**
+**Any other OUI on a TSMC-* SSID is suspicious.** The engine checks the OUI only; it does not check which SSID is allowed on which approved OUI. Use the `notes` column to judge whether a specific network is expected.
 
 ---
 
@@ -109,7 +109,7 @@ Timeline: [Immediate / 48h / 2 weeks / Next window]
 A **false positive** is a finding that the script flagged but is **not actually a risk** in context.
 
 Example:
-> **False Positive:** `[CHECK-ID]` on BSSID `[AA:BB:CC:DD:EE:FF]`, SSID `[SSID]`
-> **Why:** [One sentence of evidence from the CSV — vendor OUI in the approved table, client count, the `notes` field, or the encryption policy — that shows this flagged row is expected in context.]
+> **False Positive:** `OPEN-001` on BSSID `AA:BB:CC:DD:EE:FF`, SSID `TSMC-Guest`
+> **Why:** The `notes` field says "Guest Wi-Fi Failover AP (Authorized HA)" and 22 clients are associated. Open guest Wi-Fi is a documented accepted risk, not a corporate network exposure; the script cannot read the HA authorization from the CSV columns.
 
 **You must identify at least one false positive from your own output and explain why.**
